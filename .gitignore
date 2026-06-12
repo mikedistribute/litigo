@@ -1,0 +1,53 @@
+# ──────────────────────────────────────────────
+# Monorepo root .gitignore (frontend/ + backend/)
+# Patterns are unanchored so they match at any depth.
+# ──────────────────────────────────────────────
+
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing / coverage
+coverage/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# next.js
+.next/
+out/
+
+# production builds
+build/
+dist/
+
+# python (backend)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# misc
+.DS_Store
+*.pem
+.claude-logs/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
