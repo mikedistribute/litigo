@@ -1,8 +1,15 @@
 import { Geist_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google"
+import type { Metadata } from "next"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
+
+export const metadata: Metadata = {
+  title: "Litigo | Legal finance intelligence",
+  description:
+    "Litigo turns legal decisions into litigation funding intelligence for TPLF teams.",
+}
 
 const fontSans = IBM_Plex_Sans({
   subsets: ["latin"],
