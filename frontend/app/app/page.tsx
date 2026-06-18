@@ -234,15 +234,15 @@ export default function AppPage() {
   }
 
   return (
-    <main className="min-h-svh bg-[#f5f1e8] text-[#17140f]">
-      <header className="border-b border-[#ded5c5] bg-[#fbf8ef]/88 backdrop-blur">
+    <main className="min-h-svh bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_42%,#eef6ff_100%)] text-slate-950">
+      <header className="border-b border-slate-200 bg-white/86 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800">
             <ArrowLeft className="size-4" />
             Litigo
           </Link>
-          <div className="hidden items-center gap-2 rounded-full bg-[#e9e1d0] px-3 py-1 text-xs font-medium text-[#5f574a] sm:flex">
-            <span className="size-1.5 rounded-full bg-[#1c8d5d]" />
+          <div className="hidden items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-800 sm:flex">
+            <span className="size-1.5 rounded-full bg-blue-600" />
             Connected to production API
           </div>
         </div>
@@ -250,17 +250,17 @@ export default function AppPage() {
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[410px_minmax(0,1fr)] lg:px-8">
         <aside className="space-y-4">
-          <div className="rounded-md border border-[#ded5c5] bg-[#fbf8ef] p-5 shadow-sm">
+          <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm shadow-blue-950/5">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8f2f20]">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">
                   New screen
                 </p>
                 <h1 className="mt-2 text-3xl font-semibold leading-tight">
                   Analyze a legal decision.
                 </h1>
               </div>
-              <Scale className="size-6 text-[#8f2f20]" />
+              <Scale className="size-6 text-blue-700" />
             </div>
 
             <button
@@ -280,18 +280,18 @@ export default function AppPage() {
               className={cn(
                 "grid min-h-52 w-full place-items-center rounded-md border border-dashed p-5 text-center transition",
                 dragging
-                  ? "border-[#8f2f20] bg-[#fff3ed]"
-                  : "border-[#cbbfae] bg-white hover:border-[#8f2f20]"
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-slate-300 bg-slate-50 hover:border-blue-500 hover:bg-white"
               )}
             >
               <div className="max-w-72">
-                <div className="mx-auto mb-4 grid size-11 place-items-center rounded-md bg-[#17140f] text-[#d7ff55]">
+                <div className="mx-auto mb-4 grid size-11 place-items-center rounded-md bg-blue-600 text-white shadow-lg shadow-blue-600/20">
                   <UploadCloud className="size-5" />
                 </div>
                 <div className="text-sm font-semibold">
                   {file ? file.name : "Upload PDF, DOCX, or TXT"}
                 </div>
-                <div className="mt-1 text-xs leading-5 text-[#6d6558]">
+                <div className="mt-1 text-xs leading-5 text-slate-500">
                   {file
                     ? `${(file.size / 1024 / 1024).toFixed(2)} MB ready for screening`
                     : "Drop a decision here or open your file picker"}
@@ -311,7 +311,7 @@ export default function AppPage() {
                 type="button"
                 onClick={() => void runAnalysis()}
                 disabled={!file || busy}
-                className="h-11 rounded-md bg-[#17140f] text-white hover:bg-[#302a20]"
+                className="h-11 rounded-md bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700"
               >
                 {busy ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}
                 Start analysis
@@ -320,7 +320,7 @@ export default function AppPage() {
                 type="button"
                 variant="outline"
                 disabled={busy && !result}
-                className="h-10 rounded-md border-[#d2c6b6] bg-transparent"
+                className="h-10 rounded-md border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
                 onClick={() => {
                   eventSourceRef.current?.close()
                   setFile(null)
@@ -337,15 +337,15 @@ export default function AppPage() {
             </div>
 
             {error ? (
-              <div className="mt-4 flex gap-2 rounded-md border border-[#e2b8aa] bg-[#fff4ef] p-3 text-sm text-[#8f2f20]">
+              <div className="mt-4 flex gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                 <XCircle className="mt-0.5 size-4 shrink-0" />
                 <span>{error}</span>
               </div>
             ) : null}
           </div>
 
-          <div className="rounded-md border border-[#ded5c5] bg-[#17140f] p-5 text-white">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#d7ff55]">
+          <div className="rounded-md border border-slate-800 bg-slate-950 p-5 text-white shadow-xl shadow-blue-950/15">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-300">
               Progress
             </p>
             <div className="mt-3 flex items-end justify-between">
@@ -356,7 +356,7 @@ export default function AppPage() {
             </div>
             <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/12">
               <div
-                className="h-full rounded-full bg-[#d7ff55] transition-all duration-500"
+                className="h-full rounded-full bg-blue-400 transition-all duration-500"
                 style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
               />
             </div>
@@ -364,16 +364,16 @@ export default function AppPage() {
         </aside>
 
         <section className="space-y-4">
-          <div className="rounded-md border border-[#ded5c5] bg-[#fbf8ef] p-5 shadow-sm">
+          <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm shadow-blue-950/5">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8f2f20]">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">
                   Analysis pipeline
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold">From legal facts to funding memo</h2>
               </div>
               {result ? (
-                <span className="rounded-full bg-[#d7ff55] px-3 py-1 text-xs font-semibold">
+                <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
                   Memo ready
                 </span>
               ) : null}
@@ -388,19 +388,19 @@ export default function AppPage() {
                     key={key}
                     className={cn(
                       "rounded-md border p-4",
-                      done && "border-[#bad46b] bg-[#f4f9dc]",
-                      active && "border-[#8f2f20] bg-[#fff5ee]",
-                      !done && !active && "border-[#e2d9c9] bg-white"
+                      done && "border-blue-200 bg-blue-50",
+                      active && "border-blue-500 bg-white shadow-md shadow-blue-600/10",
+                      !done && !active && "border-slate-200 bg-slate-50"
                     )}
                   >
                     <div className="mb-5 flex items-center justify-between">
-                      <span className="text-xs font-medium text-[#6d6558]">
+                      <span className="text-xs font-medium text-slate-500">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       {done ? (
-                        <CheckCircle2 className="size-4 text-[#638006]" />
+                        <CheckCircle2 className="size-4 text-blue-700" />
                       ) : (
-                        <span className="size-2 rounded-full bg-[#c9bead]" />
+                        <span className="size-2 rounded-full bg-slate-300" />
                       )}
                     </div>
                     <div className="text-sm font-semibold">{label}</div>
@@ -411,15 +411,15 @@ export default function AppPage() {
           </div>
 
           <div className="grid gap-4 xl:grid-cols-[1fr_330px]">
-            <div className="rounded-md border border-[#ded5c5] bg-white p-5 shadow-sm">
+            <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm shadow-blue-950/5">
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8f2f20]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">
                     Output preview
                   </p>
                   <h2 className="mt-2 text-2xl font-semibold">Investment memo snapshot</h2>
                 </div>
-                <FileText className="size-5 text-[#8f2f20]" />
+                <FileText className="size-5 text-blue-700" />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -429,8 +429,8 @@ export default function AppPage() {
                   ["Infraction", memo.infraction],
                   ["Selected targets", String(memo.selected)],
                 ].map(([label, value]) => (
-                  <div key={label} className="rounded-md border border-[#e2d9c9] bg-[#fbf8ef] p-4">
-                    <div className="text-xs text-[#6d6558]">{label}</div>
+                  <div key={label} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                    <div className="text-xs text-slate-500">{label}</div>
                     <div className="mt-1 min-h-6 text-sm font-semibold">{value}</div>
                   </div>
                 ))}
@@ -438,7 +438,7 @@ export default function AppPage() {
 
               <div className="mt-5 grid gap-5 lg:grid-cols-2">
                 <div>
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#6d6558]">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                     Affected markets
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -446,18 +446,18 @@ export default function AppPage() {
                       memo.markets.map((market) => (
                         <span
                           key={market}
-                          className="rounded-full border border-[#d6ccb9] px-2.5 py-1 text-xs"
+                          className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs text-blue-800"
                         >
                           {market}
                         </span>
                       ))
                     ) : (
-                      <span className="text-sm text-[#6d6558]">Available after analysis.</span>
+                      <span className="text-sm text-slate-500">Available after analysis.</span>
                     )}
                   </div>
                 </div>
                 <div>
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#6d6558]">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                     Candidate companies
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -465,21 +465,21 @@ export default function AppPage() {
                       memo.candidates.map((company) => (
                         <span
                           key={company}
-                          className="rounded-full bg-[#17140f] px-2.5 py-1 text-xs text-white"
+                          className="rounded-full bg-slate-950 px-2.5 py-1 text-xs text-white"
                         >
                           {company}
                         </span>
                       ))
                     ) : (
-                      <span className="text-sm text-[#6d6558]">Available after sourcing.</span>
+                      <span className="text-sm text-slate-500">Available after sourcing.</span>
                     )}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-md border border-[#ded5c5] bg-[#17140f] p-5 text-white shadow-sm">
-              <ShieldCheck className="mb-6 size-7 text-[#d7ff55]" />
+            <div className="rounded-md border border-slate-800 bg-slate-950 p-5 text-white shadow-xl shadow-blue-950/15">
+              <ShieldCheck className="mb-6 size-7 text-blue-300" />
               <h2 className="text-2xl font-semibold">Memo exports</h2>
               <p className="mt-3 text-sm leading-6 text-white/62">
                 Download the generated memo for partner review, IC prep, or the
@@ -487,14 +487,14 @@ export default function AppPage() {
               </p>
               <div className="mt-6 grid gap-2">
                 {docxUrl ? (
-                  <Button asChild className="h-10 rounded-md bg-[#d7ff55] text-[#17140f] hover:bg-[#c7ef42]">
+                  <Button asChild className="h-10 rounded-md bg-blue-500 text-white hover:bg-blue-400">
                     <a href={docxUrl} download>
                       <ArrowDownToLine className="size-4" />
                       Download DOCX
                     </a>
                   </Button>
                 ) : (
-                  <Button disabled className="h-10 rounded-md bg-[#d7ff55] text-[#17140f]">
+                  <Button disabled className="h-10 rounded-md bg-blue-500 text-white">
                     <ArrowDownToLine className="size-4" />
                     Download DOCX
                   </Button>
