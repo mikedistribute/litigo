@@ -234,7 +234,7 @@ export default function AppPage() {
   }
 
   return (
-    <main className="min-h-svh bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_42%,#eef6ff_100%)] text-slate-950">
+    <main className="min-h-svh bg-white text-slate-950">
       <header className="border-b border-slate-200 bg-white/86 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800">

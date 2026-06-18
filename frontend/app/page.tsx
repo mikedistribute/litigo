@@ -47,8 +47,7 @@ const capabilities = [
 export default function Home() {
   return (
     <main className="min-h-svh bg-white text-slate-950">
-      <section className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#eef6ff_52%,#ffffff_100%)]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.16),transparent_36%)]" />
+      <section className="relative overflow-hidden border-b border-slate-200 bg-white">
         <div className="relative mx-auto flex min-h-svh max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between rounded-md border border-slate-200 bg-white/82 px-4 py-3 shadow-sm shadow-blue-950/5 backdrop-blur-xl">
             <Link href="/" className="flex items-center gap-2.5">
@@ -127,7 +126,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="grid gap-0 lg:grid-cols-[0.86fr_1.14fr]">
-                    <div className="border-b border-slate-200 bg-[linear-gradient(180deg,#f8fbff,#eef6ff)] p-5 lg:border-b-0 lg:border-r">
+                    <div className="border-b border-slate-200 bg-white p-5 lg:border-b-0 lg:border-r">
                       <div className="mb-4 flex items-center justify-between">
                         <div className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">
                           Source document

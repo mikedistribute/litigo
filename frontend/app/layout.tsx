@@ -1,4 +1,4 @@
-import { Geist_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google"
+import { Geist_Mono, Manrope, Sora } from "next/font/google"
 import type { Metadata } from "next"
 
 import "./globals.css"
@@ -11,16 +11,16 @@ export const metadata: Metadata = {
     "Litigo turns legal decisions into litigation funding intelligence for TPLF teams.",
 }
 
-const fontSans = IBM_Plex_Sans({
+const fontSans = Manrope({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 })
 
-const fontHeading = Newsreader({
+const fontHeading = Sora({
   subsets: ["latin"],
   variable: "--font-heading",
-  weight: ["500", "600", "700"],
+  weight: ["500", "600", "700", "800"],
 })
 
 const fontMono = Geist_Mono({
