@@ -52,15 +52,15 @@ def _extract_text(content: bytes, filename: str) -> str:
 
 class JobManager:
   def __init__(self):
-    self.__documents: dict[str, dict] = {}
-    self.__jobs: dict[str, dict] = {}
+    self._documents: dict[str, dict] = {}
+    self._jobs: dict[str, dict] = {}
 
   # -- documents ------------------
 
   def store_document(self, content: bytes, filename: str) -> str:
     document_id = str(uuid.uuid4())
     content_hash = hashlib.sha256(content).hexdigest()
-    self.__documents[document_id] = {
+    self._documents[document_id] = {
       "text": _extract_text(content, filename),
       "content_hash": content_hash,
       "filename": filename
@@ -68,7 +68,7 @@ class JobManager:
     return document_id
   
   def get_document_text(self, document_id: str) -> Optional[str]:
-    entry = self.__documents.get(document_id)
+    entry = self._documents.get(document_id)
     if entry is None:
       return None
     if isinstance(entry, str):
@@ -76,7 +76,7 @@ class JobManager:
     return entry.get("text")
 
   def get_content_hash(self, document_id: str) -> Optional[str]:
-    entry = self.__documents.get(document_id)
+    entry = self._documents.get(document_id)
     if entry is None or isinstance(entry, str):
       return None
     return entry.get("content_hash")
@@ -85,7 +85,7 @@ class JobManager:
   
   async def create_job(self, document_id: str) -> str:
     job_id = str(uuid.uuid4())
-    self.__jobs[job_id] = {
+    self._jobs[job_id] = {
       "document_id": document_id,
       "status": JobStatus.QUEUED,
       "current_node": None,
@@ -97,6 +97,7 @@ class JobManager:
       "content_hash": None,
       "queue": asyncio.Queue(),
     }
+    return job_id
 
   async def get_status(self, job_id: str) -> AnalysisStatusResponse:
     job = self._jobs.get(job_id)

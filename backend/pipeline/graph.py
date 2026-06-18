@@ -1,24 +1,23 @@
 from langgraph.graph import END, START, StateGraph
 
-from pipeline.nodes import (
-  document_analyzer,
-  company_sourcing, 
-  company_research, 
-  document_generator, 
-  report_writer, 
-  selection_agent
-)
 from models.pipeline import PipelineState
+from pipeline.nodes.document_analyzer import document_analyzer
+from pipeline.nodes.company_sourcing import company_sourcing_agent
+from pipeline.nodes.company_research import company_research_parallel_node
+from pipeline.nodes.selection_agent import selection_agent
+from pipeline.nodes.report_writer import report_writer
+from pipeline.nodes.document_generator import document_generator
 
 def route_after_document_analyzer(state: PipelineState) -> str:
   if state.get("status") == "failed":
     return END
+  return "company_sourcing"
 
 def build_pipeline():
   g = StateGraph(PipelineState)
   g.add_node("document_analyzer", document_analyzer)
-  g.add_node("company_sourcing", company_sourcing)
-  g.add_node("company_research", company_research)
+  g.add_node("company_sourcing", company_sourcing_agent)
+  g.add_node("company_research", company_research_parallel_node)
   g.add_node("selection_agent", selection_agent)
   g.add_node("report_writer", report_writer)
   g.add_node("document_generator", document_generator)

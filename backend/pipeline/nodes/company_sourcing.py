@@ -5,7 +5,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.prebuilt import create_react_agent
 
-from tools import gemini_grounding_search
+from tools.gemini_grounding import gemini_grounding_search
 from models.reports import CompanySourcingOutput
 from models.pipeline import PipelineState
 from config import GEMINI_MODEL, GOOGLE_API_KEY

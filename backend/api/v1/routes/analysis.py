@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
-from backend.services import llm_cache
+from services import llm_cache
 from models.pipeline import AnalysisResultResponse, AnalysisStartRequest, AnalysisStartResponse, AnalysisStatusResponse
 from services.job_manager import job_manager
 
