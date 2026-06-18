@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 
 from services import llm_cache
 from models.pipeline import AnalysisResultResponse, AnalysisStartRequest, AnalysisStartResponse, AnalysisStatusResponse
@@ -9,6 +9,24 @@ from services.job_manager import job_manager
 
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
+
+
+def _get_job_or_404(job_id: str) -> dict:
+  job = job_manager._jobs.get(job_id)
+  if not job:
+    raise HTTPException(status_code=404, detail="Job not found")
+  return job
+
+
+def _get_report_path_or_404(job_id: str, key: str) -> Path:
+  job = _get_job_or_404(job_id)
+  raw_path = job.get(key)
+  if not raw_path:
+    raise HTTPException(status_code=409, detail="Report is not ready yet")
+  path = Path(raw_path)
+  if not path.is_file():
+    raise HTTPException(status_code=404, detail="Report file not found on server")
+  return path
 
 @router.post("/upload")
 async def upload_document(file: UploadFile = File(...)):
@@ -33,20 +51,38 @@ async def get_analysis_status(job_id: str):
 
 @router.get("/{job_id}/result", response_model=AnalysisResultResponse)
 async def get_analysis_result(job_id: str):
-  job = job_manager._jobs.get(job_id)
-  if not job:
-    raise HTTPException(status_code=404, detail="Job not found")
+  job = _get_job_or_404(job_id)
 
   docx_path = job.get("output_docx_path")
   pdf_path = job.get("output_pdf_path")
 
   snap = job.get("pipeline_snapshot")
   return AnalysisResultResponse(
-      report_url_docx=f"/files/{Path(docx_path).name}" if docx_path else None,
-      report_url_pdf=f"/files/{Path(pdf_path).name}" if pdf_path else None,
+      report_url_docx=f"/api/v1/analysis/{job_id}/download/docx" if docx_path else None,
+      report_url_pdf=f"/api/v1/analysis/{job_id}/download/pdf" if pdf_path else None,
       summary=job.get("message"),
       snapshot=snap if isinstance(snap, dict) and snap else None,
       content_hash=job.get("content_hash"),
+  )
+
+
+@router.get("/{job_id}/download/docx")
+async def download_docx_report(job_id: str):
+  path = _get_report_path_or_404(job_id, "output_docx_path")
+  return FileResponse(
+    path=path,
+    filename=path.name,
+    media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  )
+
+
+@router.get("/{job_id}/download/pdf")
+async def download_pdf_report(job_id: str):
+  path = _get_report_path_or_404(job_id, "output_pdf_path")
+  return FileResponse(
+    path=path,
+    filename=path.name,
+    media_type="application/pdf",
   )
   
 @router.get("/{job_id}/stream")
