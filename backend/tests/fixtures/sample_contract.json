@@ -1,0 +1,44 @@
+{
+  "document_id": "test-cartel-laitier-001",
+  "metadata": {
+    "jurisdiction": "EU",
+    "court": "Autorité de la concurrence française",
+    "decision_date": "2024-03-15",
+    "case_reference": "18/D/10",
+    "document_language": "fr"
+  },
+  "sanctioned_parties": [
+    {
+      "name": "Entreprise X SA",
+      "role": "Auteur de l'infraction",
+      "fine_amount_eur": 15000000,
+      "sector": "Distribution alimentaire"
+    }
+  ],
+  "infraction": {
+    "type": "Entente sur les prix",
+    "affected_markets": ["Distribution de produits laitiers", "GMS France"],
+    "geographic_scope": "France",
+    "period_start": "2010-01-01",
+    "period_end": "2018-12-31",
+    "summary": "Entente horizontale sur les prix entre fournisseurs de produits laitiers en GMS France sur une période de 8 ans."
+  },
+  "key_extracts": {
+    "damage_quantification": [
+      "Le surcoût estimé par la Commission est de 15% sur les prix pratiqués entre 2010 et 2018",
+      "Le préjudice agrégé est estimé à 2,3 milliards d'euros sur la période"
+    ],
+    "affected_buyer_profiles": [
+      "Entreprises de grande distribution ayant acheté des produits laitiers en GMS",
+      "Grossistes et centrales d'achat approvisionnant la restauration collective"
+    ],
+    "geographic_scope_details": [
+      "L'infraction couvre l'ensemble du territoire français métropolitain",
+      "Extension partielle aux marchés belge et luxembourgeois à partir de 2014"
+    ],
+    "legal_findings": [
+      "La Commission retient la qualification d'entente horizontale sur les prix (art. 101 TFUE)",
+      "Solidarité des condamnés retenue — chaque membre peut être tenu pour l'intégralité"
+    ]
+  }
+}

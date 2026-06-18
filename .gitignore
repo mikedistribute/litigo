@@ -34,6 +34,9 @@ __pycache__/
 .venv/
 venv/
 env/
+backend/cache/*.json
+backend/tests/outputs/*
+!backend/tests/outputs/.gitkeep
 
 # misc
 .DS_Store
@@ -47,6 +50,7 @@ pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # typescript
 *.tsbuildinfo
