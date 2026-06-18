@@ -37,6 +37,9 @@ env/
 backend/cache/*.json
 backend/tests/outputs/*
 !backend/tests/outputs/.gitkeep
+backend/docs/*.pdf
+backend/outputs/*
+!backend/outputs/.gitkeep
 
 # misc
 .DS_Store
