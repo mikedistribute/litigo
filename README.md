@@ -1,73 +1,301 @@
 # Litigo
 
-**An agentic AI pipeline that turns competition-law decisions into ranked, fundable litigation investment opportunities.**
+### Agentic AI pipeline for Third-Party Litigation Funding
 
-Litigo ingests antitrust and competition-authority decisions, extracts the key investment variables, and delivers an investment score for follow-on litigation opportunities — producing a senior-grade investment memorandum in minutes instead of weeks.
+Litigo turns public competition-law decisions into litigation funding intelligence: it reads a legal decision, identifies affected markets, sources potential claimants, ranks the opportunity, and generates an investment memo for fund review.
 
----
-
-## Inspiration
-
-Antitrust and competition-law decisions published every year by the European Commission, national authorities, and courts often reveal that thousands of companies — especially SMEs — were overcharged by cartels or abusive market practices. Most of these victims never claim the damages they are entitled to, simply because identifying themselves in a 200-page legal decision, building a case, and funding a multi-year litigation is out of reach.
-
-On the other side of the table, Third-Party Litigation Funding (TPLF) funds are constantly looking for solid follow-on cases to invest in, but their sourcing process is still painfully manual: read the decision, extract the cartel's perimeter, list candidate buyers, run financial due diligence, and finally write an investment memo.
-
-We wanted to bridge that gap. Litigo was born from a simple idea: **an antitrust decision is a structured signal** — an AI agent should be able to read it, understand who was harmed, and turn it into a ranked, fundable investment shortlist.
-
-## What it does
-
-Litigo is an agentic AI pipeline for TPLF due diligence. From a single competition-law decision (PDF or text), it produces a complete investment memorandum in a few minutes:
-
-1. **Reads the decision** and extracts a strict, schema-validated `judicial_contract` (infraction type, affected markets, geographic scope, damage period, sanctioned parties, buyer profiles, legal findings, NACE codes, appeal status, etc.).
-2. **Sources candidate companies** that match the affected buyer profile described in the decision.
-3. **Runs parallel deep research** on each candidate (revenue, market cap, ticker/ISIN, credit rating, legal team, exposure to the cartelized market, corporate continuity) using grounded web search.
-4. **Scores and ranks** each company on its TPLF attractiveness (exposure, financial resilience, legal standing, procedural risks).
-5. **Writes a senior-grade investment memorandum** — executive summary, legal mechanics of the infraction, top-3 targets, risk factors, and a final recommendation — and exports it as a clean `.docx` ready for an investment committee.
-
-The user just uploads a decision; Litigo returns a shortlist of fundable claimants and the memo to back it up.
-
-## How it's built
-
-- **Backend:** Python, FastAPI, LangGraph and LangChain. The pipeline is modeled as a stateful graph of agentic nodes (`document_analyzer`, `company_sourcing`, `company_research`, `judge`, `report_writer`) communicating through a strongly-typed `PipelineState`.
-- **LLM layer:** Google Gemini via `langchain-google-genai`, used both with structured outputs (Pydantic schemas like `JudicialContract`, `CompanyReport`, `FinalReport`) and as a ReAct agent with a custom Gemini grounding search tool for live, citable web research.
-- **Caching:** A content-hash-based LLM cache so that re-running an analysis on the same decision is instant and free.
-- **Document generation:** A `.docx` builder that turns the `FinalReport` Pydantic object into a polished investment memo.
-- **Frontend:** Next.js 16 (App Router) + React 19 + TypeScript, Tailwind CSS 4, and shadcn/ui components. The architecture page visualizes the pipeline graph live, and the analysis page streams the agents' progress to the user.
-- **Deployment:** Frontend ships to the edge on **Cloudflare**; the backend runs on **Railway** via **Docker Compose** (FastAPI app + worker + datastore), so the whole pipeline is reproducible from a single `docker compose up`.
-
-## Architecture
-
-```
-            ┌─────────────────────────────┐
- Decision   │   Next.js (Cloudflare)      │   live agent
- PDF / text │   upload · stream · memo dl │◀── progress stream
-   ──────▶  └──────────────┬──────────────┘
-                           │ REST / SSE
-                           ▼
-            ┌─────────────────────────────┐
-            │   FastAPI (Railway · Docker)│
-            │                             │
-            │   LangGraph PipelineState   │
-            │   ┌───────────────────────┐ │
-            │   │ document_analyzer     │ │  → judicial_contract
-            │   │ company_sourcing      │ │  → candidate buyers
-            │   │ company_research  ×N  │ │  → grounded deep research (parallel)
-            │   │ judge                 │ │  → TPLF score & ranking
-            │   │ report_writer         │ │  → FinalReport → .docx
-            │   └───────────────────────┘ │
-            │   Gemini · structured out   │
-            │   content-hash LLM cache    │
-            └─────────────────────────────┘
-```
+Project inspired by the Paris Fintech Hackathon 2026 TPLF workflow.
 
 ---
 
-## Repository layout
+## Live app
 
+| Service | URL |
+| --- | --- |
+| Marketing site | https://litigo-frontend.mikebuilder22.workers.dev |
+| Product app | https://litigo-frontend.mikebuilder22.workers.dev/app |
+| Backend API | https://litigo-production.up.railway.app |
+| API health | https://litigo-production.up.railway.app/api/v1/health |
+| FastAPI docs | https://litigo-production.up.railway.app/docs |
+
+---
+
+## Overview
+
+Litigo is a web platform for Third-Party Litigation Funding (TPLF) teams.
+
+Starting from a court, regulator, or competition-authority decision, the pipeline:
+
+1. Extracts a structured judicial contract: jurisdiction, infraction, sanctioned entities, affected markets, buyer profiles, appeal status, and legal findings.
+2. Sources companies that may have been harmed by the conduct described in the decision.
+3. Runs company research with grounded LLM search.
+4. Ranks the opportunity from a litigation-funding perspective.
+5. Writes an investment memo and exposes download endpoints for `.docx` and `.pdf` outputs.
+
+Main frontend pages:
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Marketing and value proposition page. |
+| `/app` | Upload a decision, run the analysis, track progress, preview output, and download the memo. |
+
+---
+
+## How to use the live app
+
+1. Open the product app: https://litigo-frontend.mikebuilder22.workers.dev/app
+2. Upload a decision file.
+   - Supported formats: `.pdf`, `.docx`, `.txt`
+   - For a quick demo, use `backend/tests/fixtures/sample_decision_fr.txt`.
+3. Click **Start analysis**.
+4. Watch the pipeline progress:
+   - Read decision
+   - Find companies
+   - Research targets
+   - Rank opportunity
+   - Write memo
+   - Prepare export
+5. Review the memo snapshot.
+6. Download the generated `.docx` or `.pdf` when ready.
+
+> Current MVP note: jobs and generated files are stored by the backend process. This is enough for the first demo, but a production fund workflow should move files, jobs, and audit history to durable storage.
+
+---
+
+## Tech stack
+
+- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn/ui, lucide-react.
+- **Backend:** Python 3.12, FastAPI, LangGraph, LangChain, Google Gemini, Pydantic v2.
+- **Document processing:** pypdf, python-docx, docx2pdf.
+- **Deployment:** Cloudflare Workers for the frontend via OpenNext; Railway for the FastAPI backend.
+
+---
+
+## Quick start
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd litigo
 ```
+
+### 2. Run the backend
+
+```bash
+cd backend
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+cp .env.example .env
+```
+
+Set your Gemini API key in `backend/.env`:
+
+```bash
+GOOGLE_API_KEY=your_gemini_api_key
+```
+
+Start FastAPI:
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Local backend services:
+
+| Service | URL |
+| --- | --- |
+| API | http://127.0.0.1:8000 |
+| Health | http://127.0.0.1:8000/api/v1/health |
+| Swagger | http://127.0.0.1:8000/docs |
+| ReDoc | http://127.0.0.1:8000/redoc |
+
+### 3. Run the frontend
+
+Open a second terminal:
+
+```bash
+cd frontend
+bun install
+cp .env.example .env.local
+bun run dev
+```
+
+By default, `frontend/.env.example` points to the deployed Railway backend:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://litigo-production.up.railway.app
+```
+
+For local backend development, change `frontend/.env.local` to:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
+```
+
+Open:
+
+| Page | URL |
+| --- | --- |
+| Marketing site | http://localhost:3000 |
+| Product app | http://localhost:3000/app |
+
+---
+
+## Minimal API flow
+
+You can test the backend without the frontend.
+
+### Upload a decision
+
+```bash
+curl -s -F "file=@backend/tests/fixtures/sample_decision_fr.txt" \
+  https://litigo-production.up.railway.app/api/v1/analysis/upload
+```
+
+The response includes a `document_id`.
+
+### Start an analysis
+
+```bash
+curl -s -X POST https://litigo-production.up.railway.app/api/v1/analysis/start \
+  -H "Content-Type: application/json" \
+  -d '{"document_id":"<document_id>"}'
+```
+
+The response includes a `job_id`.
+
+### Stream progress
+
+```bash
+curl -N https://litigo-production.up.railway.app/api/v1/analysis/<job_id>/stream
+```
+
+### Get result metadata
+
+```bash
+curl -s https://litigo-production.up.railway.app/api/v1/analysis/<job_id>/result
+```
+
+### Download outputs
+
+```bash
+curl -L -o memo.docx \
+  https://litigo-production.up.railway.app/api/v1/analysis/<job_id>/download/docx
+
+curl -L -o memo.pdf \
+  https://litigo-production.up.railway.app/api/v1/analysis/<job_id>/download/pdf
+```
+
+---
+
+## Useful scripts
+
+### Frontend
+
+Run from `frontend/`.
+
+| Command | Description |
+| --- | --- |
+| `bun run dev` | Start Next.js dev server on port 3000. |
+| `bun run build` | Build the production Next.js app. |
+| `bun run lint` | Run ESLint. |
+| `bun run typecheck` | Run TypeScript checks. |
+| `bun run preview` | Build and preview with OpenNext Cloudflare. |
+| `bun run deploy` | Build and deploy the frontend to Cloudflare Workers. |
+
+### Backend
+
+Run from `backend/`.
+
+| Command | Description |
+| --- | --- |
+| `uvicorn main:app --reload --port 8000` | Start the FastAPI dev server. |
+| `python -m pytest tests` | Run all backend tests. |
+| `python -m tests.test_document_analyzer` | Run one learning-oriented test module directly. |
+
+---
+
+## Repository structure
+
+```text
 litigo/
-├── frontend/   # Next.js 16 · React 19 · Tailwind 4 · shadcn/ui  → Cloudflare
-└── backend/    # FastAPI · LangGraph · Gemini                    → Railway (Docker Compose)
+├── backend/
+│   ├── api/v1/routes/
+│   │   ├── analysis.py
+│   │   └── health.py
+│   ├── models/
+│   │   ├── contract.py
+│   │   ├── pipeline.py
+│   │   └── reports.py
+│   ├── pipeline/
+│   │   ├── graph.py
+│   │   ├── judicial_from_contract.py
+│   │   └── nodes/
+│   ├── services/
+│   │   ├── job_manager.py
+│   │   └── llm_cache.py
+│   ├── tests/
+│   ├── config.py
+│   ├── main.py
+│   ├── railway.json
+│   └── requirements.txt
+├── frontend/
+│   ├── app/
+│   │   ├── app/page.tsx
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/
+│   ├── lib/
+│   ├── open-next.config.ts
+│   ├── package.json
+│   └── wrangler.jsonc
+└── README.md
 ```
 
-> **Status:** Frontend scaffold in place. Backend scaffolding in progress.
+---
+
+## Deployment
+
+### Frontend: Cloudflare Workers
+
+```bash
+cd frontend
+NEXT_PUBLIC_API_BASE_URL=https://litigo-production.up.railway.app bun run deploy
+```
+
+Current deployed app:
+
+```text
+https://litigo-frontend.mikebuilder22.workers.dev
+```
+
+### Backend: Railway
+
+Railway uses `backend/railway.json`:
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+Required Railway environment variable:
+
+```bash
+GOOGLE_API_KEY=your_gemini_api_key
+```
+
+---
+
+## Notes
+
+- `backend/.env` and `frontend/.env.local` are ignored and should never be committed.
+- The backend currently keeps jobs in memory and writes generated files to local backend storage.
+- PDF generation can depend on OS-level document conversion support; DOCX output is the safer MVP export.
+- The product roadmap for a fund-grade version is documented in `backend/PRODUCT_ROADMAP.md`.
+
+---
+
+## Credits
+
+Litigo - agentic legal finance intelligence for TPLF workflows.
